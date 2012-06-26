@@ -1,0 +1,200 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7D35713F104F40520094BB5E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35713C104F40520094BB5E /* main.cpp */; };
+		7D357140104F40520094BB5E /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35713D104F40520094BB5E /* matrix.cpp */; };
+		7D357141104F40520094BB5E /* shadersource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D35713E104F40520094BB5E /* shadersource.cpp */; };
+		7D357146104F406A0094BB5E /* simple.frag in Resources */ = {isa = PBXBuildFile; fileRef = 7D357144104F405E0094BB5E /* simple.frag */; };
+		7D357147104F406A0094BB5E /* simple.vert in Resources */ = {isa = PBXBuildFile; fileRef = 7D357145104F405E0094BB5E /* simple.vert */; };
+		7D7373310FEC8CAF00CD26D5 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D7373300FEC8CAF00CD26D5 /* GLUT.framework */; };
+		7D7373350FEC8CBA00CD26D5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D7373340FEC8CBA00CD26D5 /* OpenGL.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7D35713C104F40520094BB5E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		7D35713D104F40520094BB5E /* matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = matrix.cpp; sourceTree = "<group>"; };
+		7D35713E104F40520094BB5E /* shadersource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shadersource.cpp; sourceTree = "<group>"; };
+		7D357144104F405E0094BB5E /* simple.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = simple.frag; sourceTree = "<group>"; };
+		7D357145104F405E0094BB5E /* simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = simple.vert; sourceTree = "<group>"; };
+		7D7373290FEC860400CD26D5 /* summer03.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = summer03.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D73732C0FEC860400CD26D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D7373300FEC8CAF00CD26D5 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
+		7D7373340FEC8CBA00CD26D5 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7D7373270FEC860400CD26D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D7373310FEC8CAF00CD26D5 /* GLUT.framework in Frameworks */,
+				7D7373350FEC8CBA00CD26D5 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7D73731A0FEC85D400CD26D5 = {
+			isa = PBXGroup;
+			children = (
+				7D35713C104F40520094BB5E /* main.cpp */,
+				7D35713D104F40520094BB5E /* matrix.cpp */,
+				7D35713E104F40520094BB5E /* shadersource.cpp */,
+				7D357144104F405E0094BB5E /* simple.frag */,
+				7D357145104F405E0094BB5E /* simple.vert */,
+				7D7373340FEC8CBA00CD26D5 /* OpenGL.framework */,
+				7D7373300FEC8CAF00CD26D5 /* GLUT.framework */,
+				7D73732A0FEC860400CD26D5 /* Products */,
+				7D73732C0FEC860400CD26D5 /* Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		7D73732A0FEC860400CD26D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7D7373290FEC860400CD26D5 /* summer03.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7D7373280FEC860400CD26D5 /* summer03 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D73732F0FEC860500CD26D5 /* Build configuration list for PBXNativeTarget "summer03" */;
+			buildPhases = (
+				7D7373250FEC860400CD26D5 /* Resources */,
+				7D7373260FEC860400CD26D5 /* Sources */,
+				7D7373270FEC860400CD26D5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = summer03;
+			productName = summer03;
+			productReference = 7D7373290FEC860400CD26D5 /* summer03.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7D73731C0FEC85D400CD26D5 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 7D73731F0FEC85D400CD26D5 /* Build configuration list for PBXProject "summer03" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 7D73731A0FEC85D400CD26D5;
+			productRefGroup = 7D73732A0FEC860400CD26D5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D7373280FEC860400CD26D5 /* summer03 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7D7373250FEC860400CD26D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D357146104F406A0094BB5E /* simple.frag in Resources */,
+				7D357147104F406A0094BB5E /* simple.vert in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7D7373260FEC860400CD26D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D35713F104F40520094BB5E /* main.cpp in Sources */,
+				7D357140104F40520094BB5E /* matrix.cpp in Sources */,
+				7D357141104F40520094BB5E /* shadersource.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7D73731D0FEC85D400CD26D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		7D73731E0FEC85D400CD26D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		7D73732D0FEC860500CD26D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = summer03;
+			};
+			name = Debug;
+		};
+		7D73732E0FEC860500CD26D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = summer03;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D73731F0FEC85D400CD26D5 /* Build configuration list for PBXProject "summer03" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D73731D0FEC85D400CD26D5 /* Debug */,
+				7D73731E0FEC85D400CD26D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7D73732F0FEC860500CD26D5 /* Build configuration list for PBXNativeTarget "summer03" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D73732D0FEC860500CD26D5 /* Debug */,
+				7D73732E0FEC860500CD26D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7D73731C0FEC85D400CD26D5 /* Project object */;
+}
