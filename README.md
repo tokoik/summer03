@@ -2,11 +2,11 @@
 
 ## 1. 概要
 
-このプログラムは、OpenGL の **GLSL バーテックスシェーダ** と **uniform 変数** を用いて、視野変換（カメラパラメータに基づくビュー変換行列 `lookAt`）と透視投影変換行列（`perspectiveMatrix`）を合成した行列をシェーダに渡し、3次元空間内の折れ線図形を描画する手順を学ぶための、学生向けのサンプルプログラムです。本プログラムは、以下のブログ記事の解説に沿って学習を進めるための雛形として提供されています。
+このプログラムは、OpenGL の **GLSL バーテックスシェーダ** と **uniform 変数** を用いて、ビュー変換（カメラパラメータに基づくビュー変換行列 `lookAt`）と透視投影変換行列（`perspectiveMatrix`）を合成した行列をシェーダに渡し、3次元空間内の折れ線図形を描画する手順を学ぶための、学生向けのサンプルプログラムです。本プログラムは、以下のブログ記事の解説に沿って学習を進めるための雛形として提供されています。
 
 - [第６回 視点の移動](https://tokoik.github.io/blog/今風%20opengl%20の使い方/2009/09/02/glsl.html)
 
-OpenGL 3.0 以降で廃止された `gluLookAt()` を使わず、視点位置・目標点・上方向ベクトルから自前で視野変換行列を計算し、投影変換行列と乗算（`multiplyMatrix`）した上で `glUniformMatrix4fv()` でシェーダへ転送する手法を学習します。
+OpenGL 3.0 以降で廃止された `gluLookAt()` を使わず、視点位置・目標点・上方向ベクトルから自前でビュー変換行列を計算し、投影変換行列と乗算（`multiplyMatrix`）した上で `glUniformMatrix4fv()` でシェーダへ転送する手法を学習します。
 
 ## 2. 対応環境
 
@@ -95,7 +95,7 @@ OpenGL 3.0 以降で廃止された `gluLookAt()` を使わず、視点位置・
 
 ## 6. プログラムの解説
 
-### 6.1 視野変換行列の算出 (lookAt)
+### 6.1 ビュー変換行列の算出 (lookAt)
 
 ```cpp
 void lookAt(float ex, float ey, float ez,
@@ -146,11 +146,11 @@ void lookAt(float ex, float ey, float ez,
 GLfloat perspective[16];
 perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, perspective);
 
-/* 視野変換行列を求める */
+/* ビュー変換行列を求める */
 GLfloat viewing[16];
 lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, viewing);
 
-/* 視野変換行列と投影変換行列の積を projectionMatrix に入れる */
+/* ビュー変換行列と投影変換行列の積を projectionMatrix に入れる */
 multiplyMatrix(viewing, perspective, projectionMatrix);
 
 /* uniform 変数 projectionMatrix の場所を得る */
