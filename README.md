@@ -99,9 +99,9 @@ OpenGL 3.0 以降で廃止された `gluLookAt()` を使わず、視点位置・
 
 ```cpp
 void lookAt(float ex, float ey, float ez,
-            float tx, float ty, float tz,
-            float ux, float uy, float uz,
-            GLfloat *matrix)
+  float tx, float ty, float tz,
+  float ux, float uy, float uz,
+  GLfloat* matrix)
 {
   float l;
 
@@ -110,31 +110,31 @@ void lookAt(float ex, float ey, float ez,
   ty = ey - ty;
   tz = ez - tz;
   l = sqrtf(tx * tx + ty * ty + tz * tz);
-  matrix[ 2] = tx / l;
-  matrix[ 6] = ty / l;
+  matrix[2] = tx / l;
+  matrix[6] = ty / l;
   matrix[10] = tz / l;
 
   /* x 軸 = u x z 軸 */
-  tx = uy * matrix[10] - uz * matrix[ 6];
-  ty = uz * matrix[ 2] - ux * matrix[10];
-  tz = ux * matrix[ 6] - uy * matrix[ 2];
+  tx = uy * matrix[10] - uz * matrix[6];
+  ty = uz * matrix[2] - ux * matrix[10];
+  tz = ux * matrix[6] - uy * matrix[2];
   l = sqrtf(tx * tx + ty * ty + tz * tz);
-  matrix[ 0] = tx / l;
-  matrix[ 4] = ty / l;
-  matrix[ 8] = tz / l;
+  matrix[0] = tx / l;
+  matrix[4] = ty / l;
+  matrix[8] = tz / l;
 
   /* y 軸 = z 軸 x x 軸 */
-  matrix[ 1] = matrix[ 6] * matrix[ 8] - matrix[10] * matrix[ 4];
-  matrix[ 5] = matrix[10] * matrix[ 0] - matrix[ 2] * matrix[ 8];
-  matrix[ 9] = matrix[ 2] * matrix[ 4] - matrix[ 6] * matrix[ 0];
+  matrix[1] = matrix[6] * matrix[8] - matrix[10] * matrix[4];
+  matrix[5] = matrix[10] * matrix[0] - matrix[2] * matrix[8];
+  matrix[9] = matrix[2] * matrix[4] - matrix[6] * matrix[0];
 
   /* 平行移動 */
-  matrix[12] = -(ex * matrix[ 0] + ey * matrix[ 4] + ez * matrix[ 8]);
-  matrix[13] = -(ex * matrix[ 1] + ey * matrix[ 5] + ez * matrix[ 9]);
-  matrix[14] = -(ex * matrix[ 2] + ey * matrix[ 6] + ez * matrix[10]);
+  matrix[12] = -(ex * matrix[0] + ey * matrix[4] + ez * matrix[8]);
+  matrix[13] = -(ex * matrix[1] + ey * matrix[5] + ez * matrix[9]);
+  matrix[14] = -(ex * matrix[2] + ey * matrix[6] + ez * matrix[10]);
 
   /* 残り */
-  matrix[ 3] = matrix[ 7] = matrix[11] = 0.0f;
+  matrix[3] = matrix[7] = matrix[11] = 0.0f;
   matrix[15] = 1.0f;
 }
 ```
@@ -142,11 +142,17 @@ void lookAt(float ex, float ey, float ez,
 ### 6.2 行列の乗算とシェーダへの転送
 
 ```cpp
-/* 視野変換行列と透視投影変換行列を合成 */
-lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, temp0);
-perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, temp1);
-multiplyMatrix(temp0, temp1, projectionMatrix);
+/* 透視投影変換行列を求める */
+GLfloat perspective[16];
+perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, perspective);
 
-/* uniform 変数へ行列を設定 */
-glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
+/* 視野変換行列を求める */
+GLfloat viewing[16];
+lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, viewing);
+
+/* 視野変換行列と投影変換行列の積を projectionMatrix に入れる */
+multiplyMatrix(viewing, perspective, projectionMatrix);
+
+/* uniform 変数 projectionMatrix の場所を得る */
+projectionMatrixLocation = glGetUniformLocation(gl2Program, "projectionMatrix");
 ```
