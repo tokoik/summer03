@@ -1,24 +1,22 @@
-﻿//
-#include <stdio.h>
-#include <stdlib.h>
-#if defined(_WIN32)
+﻿#if defined(_WIN32)
 #  define _USE_MATH_DEFINES
 #  define _CRT_SECURE_NO_WARNINGS
 #  include <GL/glew.h>
 #  include <GL/glut.h>
-#  include <GL/glext.h>
-#elif defined(__APPLE__) || defined(MACOSX)
+#elif defined(__APPLE__)
 #  define GL_SILENCE_DEPRECATION
 #  include <GLUT/glut.h>
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/glut.h>
 #endif
+#include <stdio.h>
+#include <stdlib.h>
 
 /*
 ** シェーダのソースプログラムの読み込みに使う関数
 */
-extern int readShaderSource(GLuint shader, const char *file);
+extern int readShaderSource(GLuint shader, const char* file);
 extern void printShaderInfoLog(GLuint shader);
 extern void printProgramInfoLog(GLuint program);
 
@@ -30,29 +28,45 @@ static GLuint fragShader;
 static GLuint gl2Program;
 
 /*
-** 投影変換行列
+** 直交投影変換行列を求める
 */
 extern void orthogonalMatrix(float left, float right,
-                             float bottom, float top,
-                             float near, float far,
-                             GLfloat *matrix);
-extern void perspectiveMatrix(float left, float right,
-                              float bottom, float top,
-                              float near, float far,
-                              GLfloat *matrix);
-static GLfloat projectionMatrix[16];
-static GLint projectionMatrixLocation;
+  float bottom, float top,
+  float zNear, float zFar,
+  GLfloat* matrix);
 
 /*
-** 視野変換行列
+** 透視投影変換行列を求める
+*/
+extern void perspectiveMatrix(float left, float right,
+  float bottom, float top,
+  float zNear, float zFar,
+  GLfloat* matrix);
+
+/*
+** 視野変換行列を求める
 */
 extern void lookAt(float ex, float ey, float ez,
-                   float tx, float ty, float tz,
-                   float ux, float uy, float uz,
-                   GLfloat *matrix);
-extern void multiplyMatrix(const GLfloat *m0,
-                           const GLfloat *m1,
-                           GLfloat *matrix);
+  float tx, float ty, float tz,
+  float ux, float uy, float uz,
+  GLfloat* matrix);
+
+/*
+** 行列の積を求める
+*/
+extern void multiplyMatrix(const GLfloat* m0,
+  const GLfloat* m1,
+  GLfloat* matrix);
+
+/*
+** 投影変換行列
+*/
+static GLfloat projectionMatrix[16];
+
+/*
+** 投影変換行列の uniform 変数の場所
+*/
+static GLint projectionMatrixLocation;
 
 /*
 ** attribute 変数 position の頂点バッファオブジェクト
@@ -70,26 +84,17 @@ static void display(void)
   /* シェーダプログラムを適用する */
   glUseProgram(gl2Program);
 
-  /* uniform 変数 projectionMatrix に行列を設定する */
+  /* 投影変換行列の uniform 変数 projectionMatrix に変換行列の値を設定する */
   glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
-
-  /* index が 0 の attribute 変数に頂点情報を対応付ける */
-  glEnableVertexAttribArray(0);
 
   /* 頂点バッファオブジェクトとして buffer を指定する */
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-  /* 頂点情報の格納場所と書式を指定する */
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   /* 図形を描く */
   glDrawArrays(GL_LINE_LOOP, 0, 4);
 
   /* 頂点バッファオブジェクトを解放する */
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  /* index が 0 の attribute 変数の頂点情報との対応付けを解除する */
-  glDisableVertexAttribArray(0);
 
   glFlush();
 }
@@ -104,23 +109,15 @@ static void init(void)
 
   /* 頂点バッファオブジェクトのメモリを参照するポインタ */
   typedef GLfloat Position[2];
-  Position *position;
-
-  /* 一時的な変換行列 */
-  GLfloat temp0[16], temp1[16];
+  Position* position;
 
 #if defined(_WIN32)
-#  define _USE_MATH_DEFINES
-#  define _CRT_SECURE_NO_WARNINGS
-#  include <GL/glew.h>
-#  include <GL/glut.h>
-#  include <GL/glext.h>
-#elif defined(__APPLE__) || defined(MACOSX)
-#  define GL_SILENCE_DEPRECATION
-#  include <GLUT/glut.h>
-#else
-#  define GL_GLEXT_PROTOTYPES
-#  include <GL/glut.h>
+  /* GLEW の初期化 */
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    exit(1);
+  }
 #endif
 
   /* 背景色 */
@@ -175,14 +172,19 @@ static void init(void)
     exit(1);
   }
 
-  /* 視野変換行列を求める */
-  lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, temp0);
+  /* index が 0 の attribute 変数を有効にする */
+  glEnableVertexAttribArray(0);
 
   /* 透視投影変換行列を求める */
-  perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, temp1);
+  GLfloat perspective[16];
+  perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, perspective);
+
+  /* 視野変換行列を求める */
+  GLfloat viewing[16];
+  lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, viewing);
 
   /* 視野変換行列と投影変換行列の積を projectionMatrix に入れる */
-  multiplyMatrix(temp0, temp1, projectionMatrix);
+  multiplyMatrix(viewing, perspective, projectionMatrix);
 
   /* uniform 変数 projectionMatrix の場所を得る */
   projectionMatrixLocation = glGetUniformLocation(gl2Program, "projectionMatrix");
@@ -192,23 +194,26 @@ static void init(void)
 
   /* 頂点バッファオブジェクトに４頂点分のメモリ領域を確保する */
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof (Position) * 4, NULL, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(Position) * 4, NULL, GL_STATIC_DRAW);
 
   /* 頂点バッファオブジェクトのメモリをプログラムのメモリ空間にマップする */
-  position = (Position *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  position = (Position*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
   /* 頂点バッファオブジェクトのメモリにデータを書き込む */
-  position[0][0] =  0.9;
-  position[0][1] =  0.9;
-  position[1][0] = -0.9;
-  position[1][1] =  0.9;
-  position[2][0] = -0.9;
-  position[2][1] = -0.9;
-  position[3][0] =  0.9;
-  position[3][1] = -0.9;
+  position[0][0] = 0.9f;
+  position[0][1] = 0.9f;
+  position[1][0] = -0.9f;
+  position[1][1] = 0.9f;
+  position[2][0] = -0.9f;
+  position[2][1] = -0.9f;
+  position[3][0] = 0.9f;
+  position[3][1] = -0.9f;
 
   /* 頂点バッファオブジェクトのメモリをプログラムのメモリ空間から切り離す */
   glUnmapBuffer(GL_ARRAY_BUFFER);
+
+  /* index が 0 の attribute 変数に頂点バッファオブジェクトの場所と書式を設定する */
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   /* 頂点バッファオブジェクトを解放する */
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -217,7 +222,7 @@ static void init(void)
 /*
 ** メインプログラム
 */
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGB);
