@@ -95,9 +95,31 @@ OpenGL 3.0 以降で廃止された `gluLookAt()` を使わず、視点位置・
 
 ## 6. プログラムの解説
 
-### 6.1 ビュー変換行列の算出 (lookAt)
+### 6.1 透視投影変換行列とビュー変換行列 (matrix.cpp)
 
-```cpp
+`cpp
+/* 透視投影変換行列 */
+void perspectiveMatrix(float left, float right,
+  float bottom, float top,
+  float zNear, float zFar,
+  GLfloat* matrix)
+{
+  float dx = right - left;
+  float dy = top - bottom;
+  float dz = zFar - zNear;
+
+  matrix[0] = 2.0f * zNear / dx;
+  matrix[5] = 2.0f * zNear / dy;
+  matrix[8] = (right + left) / dx;
+  matrix[9] = (top + bottom) / dy;
+  matrix[10] = -(zFar + zNear) / dz;
+  matrix[11] = -1.0f;
+  matrix[14] = -2.0f * zFar * zNear / dz;
+  matrix[1] = matrix[2] = matrix[3] = matrix[4] =
+    matrix[6] = matrix[7] = matrix[12] = matrix[13] = matrix[15] = 0.0f;
+}
+
+/* ビュー変換行列 */
 void lookAt(float ex, float ey, float ez,
   float tx, float ty, float tz,
   float ux, float uy, float uz,
@@ -137,22 +159,40 @@ void lookAt(float ex, float ey, float ez,
   matrix[3] = matrix[7] = matrix[11] = 0.0f;
   matrix[15] = 1.0f;
 }
-```
+`
 
-### 6.2 行列の乗算とシェーダへの転送
+### 6.2 図形の描画 (display)
 
-```cpp
-/* 透視投影変換行列を求める */
-GLfloat perspective[16];
-perspectiveMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 7.0f, 11.0f, perspective);
+`cpp
+/* 画面クリア */
+glClear(GL_COLOR_BUFFER_BIT);
 
-/* ビュー変換行列を求める */
-GLfloat viewing[16];
-lookAt(4.0f, 5.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, viewing);
+/* プログラムオブジェクトを適用する */
+glUseProgram(gl2Program);
 
-/* ビュー変換行列と投影変換行列の積を projectionMatrix に入れる */
-multiplyMatrix(viewing, perspective, projectionMatrix);
+/* 投影変換行列の uniform 変数 projectionMatrix に変換行列の値を設定する */
+glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
-/* uniform 変数 projectionMatrix の場所を得る */
-projectionMatrixLocation = glGetUniformLocation(gl2Program, "projectionMatrix");
-```
+/* 頂点バッファオブジェクトとして buffer を指定する */
+glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+/* index が 0 の attribute 変数を有効にする */
+glEnableVertexAttribArray(0);
+
+/* index が 0 の attribute 変数に頂点バッファオブジェクトの場所と書式を設定する */
+glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+/* 図形を描く */
+glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+/* index が 0 の attribute 変数を無効にする */
+glDisableVertexAttribArray(0);
+
+/* 頂点バッファオブジェクトを解放する */
+glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+/* 固定機能に戻す */
+glUseProgram(0);
+
+glFlush();
+`

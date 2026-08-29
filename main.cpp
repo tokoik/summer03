@@ -21,10 +21,8 @@ extern void printShaderInfoLog(GLuint shader);
 extern void printProgramInfoLog(GLuint program);
 
 /*
-** シェーダオブジェクト
+** プログラムオブジェクト
 */
-static GLuint vertShader;
-static GLuint fragShader;
 static GLuint gl2Program;
 
 /*
@@ -81,7 +79,7 @@ static void display(void)
   /* 画面クリア */
   glClear(GL_COLOR_BUFFER_BIT);
 
-  /* シェーダプログラムを適用する */
+  /* プログラムオブジェクトを適用する */
   glUseProgram(gl2Program);
 
   /* 投影変換行列の uniform 変数 projectionMatrix に変換行列の値を設定する */
@@ -90,11 +88,23 @@ static void display(void)
   /* 頂点バッファオブジェクトとして buffer を指定する */
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
+  /* index が 0 の attribute 変数を有効にする */
+  glEnableVertexAttribArray(0);
+
+  /* index が 0 の attribute 変数に頂点バッファオブジェクトの場所と書式を設定する */
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
   /* 図形を描く */
   glDrawArrays(GL_LINE_LOOP, 0, 4);
 
+  /* index が 0 の attribute 変数を無効にする */
+  glDisableVertexAttribArray(0);
+
   /* 頂点バッファオブジェクトを解放する */
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  /* 固定機能に戻す*/
+  glUseProgram(0);
 
   glFlush();
 }
@@ -104,13 +114,6 @@ static void display(void)
 */
 static void init(void)
 {
-  /* シェーダプログラムのコンパイル／リンク結果を得る変数 */
-  GLint compiled, linked;
-
-  /* 頂点バッファオブジェクトのメモリを参照するポインタ */
-  typedef GLfloat Position[2];
-  Position* position;
-
 #if defined(_WIN32)
   /* GLEW の初期化 */
   GLenum err = glewInit();
@@ -124,12 +127,15 @@ static void init(void)
   glClearColor(1.0, 1.0, 1.0, 1.0);
 
   /* シェーダオブジェクトの作成 */
-  vertShader = glCreateShader(GL_VERTEX_SHADER);
-  fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+  GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
+  GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
   /* シェーダのソースプログラムの読み込み */
   if (readShaderSource(vertShader, "simple.vert")) exit(1);
   if (readShaderSource(fragShader, "simple.frag")) exit(1);
+
+  /* シェーダオブジェクトのコンパイル結果を得る変数 */
+  GLint compiled;
 
   /* バーテックスシェーダのソースプログラムのコンパイル */
   glCompileShader(vertShader);
@@ -152,7 +158,7 @@ static void init(void)
   /* プログラムオブジェクトの作成 */
   gl2Program = glCreateProgram();
 
-  /* シェーダオブジェクトのシェーダプログラムへの登録 */
+  /* プログラムオブジェクトにシェーダオブジェクトをの登録する */
   glAttachShader(gl2Program, vertShader);
   glAttachShader(gl2Program, fragShader);
 
@@ -163,7 +169,10 @@ static void init(void)
   /* attribute 変数 position の index を 0 に指定する */
   glBindAttribLocation(gl2Program, 0, "position");
 
-  /* シェーダプログラムのリンク */
+  /* プログラムオブジェクトのリンク結果を得る変数 */
+  GLint linked;
+
+  /* プログラムオブジェクトのリンク */
   glLinkProgram(gl2Program);
   glGetProgramiv(gl2Program, GL_LINK_STATUS, &linked);
   printProgramInfoLog(gl2Program);
@@ -171,9 +180,6 @@ static void init(void)
     fprintf(stderr, "Link error.\n");
     exit(1);
   }
-
-  /* index が 0 の attribute 変数を有効にする */
-  glEnableVertexAttribArray(0);
 
   /* 透視投影変換行列を求める */
   GLfloat perspective[16];
@@ -192,12 +198,15 @@ static void init(void)
   /* 頂点バッファオブジェクトを１つ作る */
   glGenBuffers(1, &buffer);
 
+  /* 頂点のデータ型 */
+  typedef GLfloat Position[2];
+
   /* 頂点バッファオブジェクトに４頂点分のメモリ領域を確保する */
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Position) * 4, NULL, GL_STATIC_DRAW);
 
   /* 頂点バッファオブジェクトのメモリをプログラムのメモリ空間にマップする */
-  position = (Position*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  Position* position = (Position*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
   /* 頂点バッファオブジェクトのメモリにデータを書き込む */
   position[0][0] = 0.9f;
@@ -211,9 +220,6 @@ static void init(void)
 
   /* 頂点バッファオブジェクトのメモリをプログラムのメモリ空間から切り離す */
   glUnmapBuffer(GL_ARRAY_BUFFER);
-
-  /* index が 0 の attribute 変数に頂点バッファオブジェクトの場所と書式を設定する */
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   /* 頂点バッファオブジェクトを解放する */
   glBindBuffer(GL_ARRAY_BUFFER, 0);
